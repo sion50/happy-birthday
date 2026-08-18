@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Dimas - Birthday Galaxy</title>
+  <style>
+    :root {
+      --neon-cyan: #00f2fe;
+      --neon-blue: #4facfe;
+      --neon-purple: #9b51e0;
+      --glow-blue: rgba(79, 172, 254, 0.8);
+      --spotify-green: #1db954;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: #03030c;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Container Utama Luar Angkasa */
+    .universe {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Efek Nebula Kosmik */
+    .nebula {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 140vmax;
+      height: 140vmax;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(
+        circle,
+        rgba(0, 242, 254, 0.12) 0%,
+        rgba(155, 81, 224, 0.1) 35%,
+        rgba(15, 23, 42, 0.6) 70%,
+        transparent 100%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Canvas Galaksi */
+    canvas#galaxyCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    /* Container Teks 3D Mengorbit */
+    #orbitContainer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      pointer-events: none;
+      perspective: 1000px;
+    }
+
+    .orbit-item {
+      position: absolute;
+      white-space: nowrap;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transform-origin: center center;
+      transition: opacity 0.1s linear;
+      will-change: transform, opacity;
+    }
+
+    .orbit-text {
+      color: #e0f7ff;
+      text-shadow: 0 0 8px var(--glow-blue), 0 0 16px var(--neon-cyan);
+      font-size: 1rem;
+    }
+
+    /* Bingkai Foto Mengorbit */
+    .orbit-photo {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 0 15px var(--neon-cyan);
+      background-size: cover;
+      background-position: center;
+      /* Ganti URL di bawah dengan foto Dimas atau foto kalian berdua */
+      background-image: url('https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80');
+    }
+
+    /* Pesan Utama di Tengah */
+    .Para_Ti {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 5;
+      pointer-events: none;
+      animation: pulseGlow 2.5s infinite ease-in-out;
+    }
+
+    .Para_Ti h1 {
+      font-size: 2.8rem;
+      letter-spacing: 6px;
+      color: #ffffff;
+      text-shadow: 
+        0 0 10px var(--neon-cyan),
+        0 0 25px var(--neon-blue),
+        0 0 45px var(--neon-purple);
+    }
+
+    .Para_Ti p {
+      font-size: 1.1rem;
+      letter-spacing: 3px;
+      color: #cbebff;
+      margin-top: 6px;
+      text-shadow: 0 0 8px rgba(79, 172, 254, 0.8);
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        transform: translateX(-50%) scale(1);
+        filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.4));
+      }
+      50% {
+        transform: translateX(-50%) scale(1.04);
+        filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.8));
+      }
+    }
+
+    /* Elemen Pesta & Emoji Melayang */
+    .floating-elements {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-item {
+      position: absolute;
+      bottom: -60px;
+      font-size: 1.6rem;
+      animation: floatUp 10s linear infinite;
+      opacity: 0.85;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.8; }
+      100% {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Widget Spotify Player */
+    .spotify-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .spotify-toggle-btn {
+      background: rgba(29, 185, 84, 0.2);
+      border: 1px solid var(--spotify-green);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 15px rgba(29, 185, 84, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .spotify-toggle-btn:hover {
+      background: var(--spotify-green);
+      color: #000;
+      box-shadow: 0 0 20px var(--spotify-green);
+    }
+
+    .spotify-iframe-box {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(29, 185, 84, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .spotify-iframe-box.hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="universe">
+    <div class="nebula"></div>
+    <canvas id="galaxyCanvas"></canvas>
+    <div id="orbitContainer"></div>
+    
+    <!-- Ucapan Utama untuk Dimas -->
+    <div class="Para_Ti">
+      <h1>DIMAS</h1>
+      <p>HAPPY BIRTHDAY BROTHER!</p>
+    </div>
+
+    <!-- Balon & Emoji Melayang -->
+    <div class="floating-elements" id="floatingElements"></div>
+
+    <!-- Pemutar Musik Spotify -->
+    <div class="spotify-widget">
+      <button class="spotify-toggle-btn" onclick="toggleSpotify()">
+        <span>🎧</span> Buka / Tutup Spotify
+      </button>
+      <div class="spotify-iframe-box" id="spotifyBox">
+        <iframe 
+          style="border-radius:12px" 
+          src="https://open.spotify.com/embed/track/55pBIZO1cqoldeqpp5WR7H?utm_source=generator&theme=0" 
+          width="300" 
+          height="80" 
+          frameBorder="0" 
+          allowfullscreen="" 
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+          loading="lazy">
+        </iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('galaxyCanvas');
+    const ctx = canvas.getContext('2d');
+    const orbitContainer = document.getElementById('orbitContainer');
+    const floatingContainer = document.getElementById('floatingElements');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    // 1. Partikel Bintang
+    const starCount = 220;
+    const stars = [];
+    for (let i = 0; i < starCount; i++) {
+      stars.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 1.4 + 0.3,
+        alpha: Math.random(),
+        speed: (Math.random() * 0.02 + 0.005) * (Math.random() < 0.5 ? 1 : -1)
+      });
+    }
+
+    function renderStars() {
+      stars.forEach(s => {
+        s.alpha += s.speed;
+        if (s.alpha > 1 || s.alpha < 0.1) s.speed = -s.speed;
+        ctx.fillStyle = `rgba(224, 247, 255, ${Math.abs(s.alpha)})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    // 2. Partikel Bintang Kosmik Bercahaya di Pusat (Cosmic Star Core)
+    const starPoints = [];
+    const numStarPoints = 300;
+    for (let i = 0; i < numStarPoints; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.random() * 55 + 5;
+      starPoints.push({
+        angle: angle,
+        distance: radius,
+        speed: (Math.random() * 0.01 + 0.005),
+        size: Math.random() * 1.8 + 0.8,
+        color: Math.random() > 0.4 ? '#00f2fe' : '#4facfe'
+      });
+    }
+
+    // 3. Pusaran Spiral Galaksi
+    const spiralParticles = [];
+    const numSpiral = 400;
+    for (let i = 0; i < numSpiral; i++) {
+      spiralParticles.push({
+        angle: Math.random() * Math.PI * 2,
+        distance: Math.random() * 260 + 20,
+        speed: Math.random() * 0.008 + 0.003,
+        size: Math.random() * 1.8 + 0.6,
+        alpha: Math.random() * 0.7 + 0.3,
+        armOffset: Math.floor(Math.random() * 2) * Math.PI
+      });
+    }
+
+    let globalTick = 0;
+
+    function renderGalaxyCore() {
+      const cx = width / 2;
+      const cy = height * 0.48;
+
+      // Pusaran Spiral
+      spiralParticles.forEach(p => {
+        p.angle += p.speed;
+        const currentAngle = p.angle + p.armOffset;
+        const r = p.distance;
+        
+        const x = cx + Math.cos(currentAngle) * r;
+        const y = cy + Math.sin(currentAngle) * (r * 0.35);
+
+        ctx.fillStyle = `rgba(0, 242, 254, ${p.alpha * 0.8})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#00f2fe';
+        ctx.beginPath();
+        ctx.arc(x, y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Pusat Kosmik
+      const pulse = 1 + Math.sin(globalTick * 0.05) * 0.08;
+      starPoints.forEach(sp => {
+        sp.angle += sp.speed;
+        const x = cx + Math.cos(sp.angle) * sp.distance * pulse;
+        const y = (cy - 50) + Math.sin(sp.angle) * sp.distance * pulse;
+
+        ctx.fillStyle = sp.color;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = '#4facfe';
+        ctx.beginPath();
+        ctx.arc(x, y, sp.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.shadowBlur = 0;
+    }
+
+    // 4. Frasa & Teks Mengorbit (Tema Teman Dekat / Brotherhood)
+    const orbitPhrases = [
+      { type: 'text', content: "SELAMAT ULANG TAHUN" },
+      { type: 'text', content: "HAPPY BIRTHDAY DIMAS" },
+      { type: 'text', content: "BEST FRIEND FOREVER" },
+      { type: 'photo' },
+      { type: 'text', content: "SUKSES SELALU BRO" },
+      { type: 'text', content: "SEHAT & PANJANG UMUR" },
+      { type: 'text', content: "SOLID TERUS KAWAN" },
+      { type: 'text', content: "MY BROTHER" },
+      { type: 'photo' },
+      { type: 'text', content: "MAKIN GACOR!" },
+      { type: 'text', content: "KAWAN SEPERJUANGAN" },
+      { type: 'text', content: "CHEERS TO ANOTHER YEAR" }
+    ];
+
+    const orbitItems = [];
+    orbitPhrases.forEach((item, index) => {
+      const el = document.createElement('div');
+      el.className = 'orbit-item ' + (item.type === 'photo' ? 'orbit-photo' : 'orbit-text');
+      if (item.type === 'text') el.innerText = item.content;
+      orbitContainer.appendChild(el);
+
+      orbitItems.push({
+        dom: el,
+        angle: (index / orbitPhrases.length) * Math.PI * 2,
+        rx: Math.min(width * 0.42, 380) + (index % 3) * 20,
+        ry: 110 + (index % 2) * 15,
+        speed: 0.005
+      });
+    });
+
+    function updateOrbitItems() {
+      const cx = width / 2;
+      const cy = height * 0.52;
+
+      orbitItems.forEach(item => {
+        item.angle += item.speed;
+        
+        const x = cx + Math.cos(item.angle) * item.rx;
+        const y = cy + Math.sin(item.angle) * item.ry;
+        
+        const sinVal = Math.sin(item.angle);
+        const scale = 0.65 + (sinVal + 1) * 0.45;
+        const opacity = 0.35 + (sinVal + 1) * 0.32;
+        const zIndex = Math.round((sinVal + 1) * 50) + 10;
+
+        item.dom.style.left = `${x}px`;
+        item.dom.style.top = `${y}px`;
+        item.dom.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        item.dom.style.opacity = opacity;
+        item.dom.style.zIndex = zIndex;
+      });
+    }
+
+    // 5. Partikel Melayang (Tema Ulang Tahun & Persahabatan)
+    const celebrationEmojis = ['🎂', '🎈', '🎉', '🚀', '🔥', '👑', '✨', '🌟'];
+    function spawnFloatingItem() {
+      const item = document.createElement('div');
+      item.className = 'floating-item';
+      item.innerText = celebrationEmojis[Math.floor(Math.random() * celebrationEmojis.length)];
+      item.style.left = Math.random() * 95 + 'vw';
+      item.style.animationDuration = (Math.random() * 5 + 7) + 's';
+      floatingContainer.appendChild(item);
+
+      setTimeout(() => {
+        item.remove();
+      }, 12000);
+    }
+    setInterval(spawnFloatingItem, 1200);
+
+    // 6. Loop Animasi Utama
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      renderStars();
+      renderGalaxyCore();
+      updateOrbitItems();
+      globalTick++;
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Toggle Tampilan Spotify
+    function toggleSpotify() {
+      const box = document.getElementById('spotifyBox');
+      box.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>
